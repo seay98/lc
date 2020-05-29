@@ -22,7 +22,8 @@
         </div>
         <div class="p-2 bd-highlight">
             <div class="container">
-                <button id="markbtn" type="button" class="btn btn-primary">我要标点</button>
+                <button id="markbtn" type="button" class="btn btn-primary">我要信号点</button>
+                <button id="cilocbtn" type="button" class="btn btn-primary">我要基站位置</button>
             </div>
         </div>
     </div>
@@ -32,22 +33,32 @@
         $(document).ready(function () {
             $("#markbtn").click(function () {
                 $.ajax({
-                    //请求方式
                     type: "GET",
-                    //请求的媒体类型
                     contentType: "application/json;charset=UTF-8",
-                    //请求地址
-                    url: "http://127.0.0.1:8000/bsites/ic",
-                    //数据，json字符串
-                    //data: JSON.stringify(list),
-                    //请求成功
+                    url: "{% url 'lac-ci' %}",
                     success: function (result) {
                         //console.log(result.slice(0, -3) + ']');
                         data = result.slice(0, -3) + ']'
                         locations = jQuery.parseJSON(data);
                         loadpoints(locations);
                     },
-                    //请求失败，包含具体的错误信息
+                    error: function (e) {
+                        console.log(e.status);
+                        console.log(e.responseText);
+                    }
+                });
+            });
+            $("#cilocbtn").click(function () {
+                $.ajax({
+                    type: "GET",
+                    contentType: "application/json;charset=UTF-8",
+                    url: "{% url 'lac-ciloc' %}",
+                    success: function (result) {
+                        //console.log(result.slice(0, -3) + ']');
+                        data = result.slice(0, -3) + ']'
+                        locations = jQuery.parseJSON(data);
+                        loadpoints(locations);
+                    },
                     error: function (e) {
                         console.log(e.status);
                         console.log(e.responseText);
@@ -71,7 +82,7 @@
             var label = [];
             for (var i in locations) {//遍历packJson 对象的每个key/value对,k为key
                 locs[i] = new AMap.LngLat(parseFloat(locations[i].lon), parseFloat(locations[i].lat));
-                label[i] = locations[i].rs;
+                label[i] = locations[i].title;
             }
             //var gps = [locations.lat, locations.lon];
             var marker = [];

@@ -10,7 +10,7 @@ class Basesite(models.Model):
     mcc = models.IntegerField()
     ci2 = models.CharField(max_length=100)
     deviceId = models.CharField(max_length=128)
-    lac =models.IntegerField()
+    lac = models.IntegerField()
     dl_bandwidth = models.IntegerField()
     freq_band_ind = models.IntegerField()
     creatTime = models.CharField(max_length=64)
@@ -35,3 +35,14 @@ class Basesite(models.Model):
     def __str__(self):
         return "%d-%d-%d-%d-%d" % (self.mcc, self.mnc, self.lac, self.ci1, self.rs)
 
+
+class Celllocation(models.Model):
+    mcc = models.IntegerField()
+    mnc = models.IntegerField()
+    lac = models.IntegerField()
+    ci1 = models.IntegerField()
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    def __str__(self):
+        return "%d-%d-%d-%d: %05f, %05f" % (self.mcc, self.mnc, self.lac, self.ci1, self.latitude, self.longitude)

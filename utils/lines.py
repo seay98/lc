@@ -9,15 +9,15 @@ def find_geoperpendicularpoints(p1, p2):
     l = geod.InverseLine(p1[0], p1[1], p2[0], p2[1])
     p3 = l.Position(l.s13/2)
 
-    ds = 100
-    interval = 5
+    ds = 1000.0
+    interval = 10.0
     p4s = []
-    for i in range(ds/interval):
+    for i in range(math.ceil(ds/interval)):
         p4 = geod.Direct(p3['lat2'], p3['lon2'], p3['azi2']-90, i*interval)
         p0 = [p4['lat2'], p4['lon2']]
         p4s.append(p0)
 
-    for i in range(ds/interval):
+    for i in range(1,math.ceil(ds/interval)):
         p4 = geod.Direct(p3['lat2'], p3['lon2'], p3['azi2']+90, i*interval)
         p0 = [p4['lat2'], p4['lon2']]
         p4s.append(p0)
@@ -49,16 +49,18 @@ def get_geointersection(pl1, pl2, interval=10):
 def get_geodistance(p1, p2):
     geod = Geodesic.WGS84
     g = geod.Inverse(p1[0], p1[1], p2[0], p2[1])
-    return round(g['s12'], 2)
+    return round(g['s12'], 3)
 
 
 # GCJ-02 to WGS84. Parameter: (lng, lat)
 def get_wgs84(p):
-    return gpstrans.gcj02towgs84(p[1], p[0])
+    pw = gpstrans.gcj02towgs84(p[1], p[0])
+    return [pw[1], pw[0]]
 
 # WGS84 to GCJ-02. Parameter: (lng, lat)
 def get_gcj02(p):
-    return gpstrans.wgs84togcj02(p[1], p[0])
+    pg = gpstrans.wgs84togcj02(p[1], p[0])
+    return [pg[1], pg[0]]
 
 # There are p1 and p2, finding p3 and p4.
 # 直角坐标系找垂直线
