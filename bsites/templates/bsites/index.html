@@ -1,9 +1,9 @@
+{% load static %}
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <script src="https://webapi.amap.com/loader.js"></script>
-
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <style type="text/css">
         #container {
@@ -19,6 +19,9 @@
     <div>
         <div class="p-2 bd-highlight">
             <div id="container" class="container"></div>
+            <script type="text/javascript"
+                src="https://webapi.amap.com/maps?v=2.0&key=ea1755d089de2195989b92e02d7a642e"></script>
+            <script src="{% static 'bsites/index.js' %}"></script>
         </div>
         <div class="p-2 bd-highlight">
             <div class="container">
@@ -27,111 +30,6 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript"
-        src="https://webapi.amap.com/maps?v=2.0&key=ea1755d089de2195989b92e02d7a642e"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#markbtn").click(function () {
-                $.ajax({
-                    type: "GET",
-                    contentType: "application/json;charset=UTF-8",
-                    url: "{% url 'lac-ci' %}",
-                    success: function (result) {
-                        //console.log(result.slice(0, -3) + ']');
-                        data = result.slice(0, -3) + ']'
-                        locations = jQuery.parseJSON(data);
-                        loadpoints(locations);
-                    },
-                    error: function (e) {
-                        console.log(e.status);
-                        console.log(e.responseText);
-                    }
-                });
-            });
-            $("#cilocbtn").click(function () {
-                $.ajax({
-                    type: "GET",
-                    contentType: "application/json;charset=UTF-8",
-                    url: "{% url 'lac-ciloc' %}",
-                    success: function (result) {
-                        //console.log(result.slice(0, -3) + ']');
-                        data = result.slice(0, -3) + ']'
-                        locations = jQuery.parseJSON(data);
-                        loadpoints(locations);
-                    },
-                    error: function (e) {
-                        console.log(e.status);
-                        console.log(e.responseText);
-                    }
-                });
-            });
-        });
-        var map = new AMap.Map('container', {
-            zoom: 13
-        });
-
-        function loadpoints(locations) {
-            var icon = new AMap.Icon({
-                size: new AMap.Size(12, 12),    // 图标尺寸
-                image: 'https://a.amap.com/jsapi_demos/static/demo-center/marker/marker.png',  // Icon的图像
-                imageOffset: new AMap.Pixel(0, 0),  // 图像相对展示区域的偏移量，适于雪碧图等
-                imageSize: new AMap.Size(12, 12)   // 根据所设置的大小拉伸或压缩图片
-            });
-
-            var locs = [];
-            var label = [];
-            for (var i in locations) {//遍历packJson 对象的每个key/value对,k为key
-                locs[i] = new AMap.LngLat(parseFloat(locations[i].lon), parseFloat(locations[i].lat));
-                label[i] = locations[i].title;
-            }
-            //var gps = [locations.lat, locations.lon];
-            var marker = [];
-            var labelOffset = new AMap.Pixel(0, -5);
-            var pos;
-            map.setCenter(locs[0]);
-            for (var i = 0; i < locs.length; i++) {
-                if (pos == locs[i]) continue;
-                pos = locs[i];
-                marker[i] = new AMap.Marker({
-                    position: locs[i],   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
-                    offset: new AMap.Pixel(-6, -6),
-                    icon: icon,
-                    title: 'lac',
-                    zoom: 13,
-                    label: {
-                        direction: 'top',
-                        content: "<div class='labelContent'>" + label[i] + "</div>",
-                        offset: labelOffset,
-                    }
-                });
-                map.add(marker[i]);
-            }
-            AMap.convertFrom(locs, 'gps', function (status, result) {
-                if (result.info === 'ok') {
-                    var lnglats = result.locations;
-                    // alert(lnglats);
-
-                    // var labelOffset = new AMap.Pixel(0, -5);
-                    // for (var i = 0; i < lnglats.length; i++) {
-                    //     marker[i] = new AMap.Marker({
-                    //         position: lnglats[i],   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
-                    //         offset: new AMap.Pixel(0, 0),
-                    //         icon: icon,
-                    //         title: 'lac',
-                    //         zoom: 13,
-                    //         label: {
-                    //             direction: 'top',
-                    //             content: "<div class='labelContent'>"+label[i]+"</div>",
-                    //             offset: labelOffset,
-                    //         }
-                    //     });
-                    //     map.add(marker[i]);
-                    // }
-                }
-            });
-        };
-
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
         crossorigin="anonymous"></script>

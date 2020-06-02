@@ -60,5 +60,5 @@ for i in range(len(pointsline)):
         pl2 = pointsline[j]
         intersection = lines.get_geointersection(pl1, pl2)
         if intersection:
-            intersections.append(intersection)
+            intersections.append(lines.get_gcj02(intersection))
 print(intersections)

@@ -16,5 +16,3 @@ with open(jsonpath) as jf:
         for data in jsd['data']:
             writer.writerow(data.values())
 
-    cf.close()
-jf.close()

@@ -44,6 +44,44 @@ def get_geointersection(pl1, pl2, interval=10):
 
     return intersection
 
+# 地理坐标系上离base最远的点
+def find_geomaxdispoint(base, points):
+    point = []
+    maxds = 0
+    for p in points:
+        ds = get_geodistance(base, p)
+        if ds > maxds:
+            maxds = ds
+            point = p
+    return point
+
+# 地理坐标系上离线最远点
+def find_geomaxdislinepoint(l, points):
+    geod = Geodesic.WGS84
+    g = geod.Inverse(l[0][0], l[0][1], l[1][0], l[1][1])
+    p1 = []
+    p2 = []
+    maxar1 = g['azi1']
+    maxar2 = g['azi1']
+    for p in points:
+        # gp = geod.Polygon()
+        # gp.AddPoint(l[0][0], l[0][1])
+        # gp.AddPoint(l[1][0], l[1][1])
+        # gp.AddPoint(p[0], p[1])
+        # _, _, area = gp.Compute()
+        g1 = geod.Inverse(l[0][0], l[0][1], p[0], p[1])
+        if maxar1 < g1['azi1']:
+            maxar1 = g1['azi1']
+            p1 = p
+        elif maxar2 > g1['azi1']:
+            maxar2 = g1['azi1']
+            p2 = p
+    p1w = geod.Direct(l[0][0], l[0][1], maxar1, g['s12'])
+    p2w = geod.Direct(l[0][0], l[0][1], maxar2, g['s12'])
+    p1 = [p1w['lat2'], p1w['lon2']]
+    p2 = [p2w['lat2'], p2w['lon2']]
+    return [p1, p2]
+
 
 # 地理坐标系距离计算, WGS84, Parameter: (lat, lng)
 def get_geodistance(p1, p2):
