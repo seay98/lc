@@ -21,5 +21,7 @@ with open(csvpath) as cf:
 
 # 离基站最远的点
 top = lines.find_geomaxdispoint(base, points)
-p1, p2 = lines.find_geomaxdislinepoint([base, top], points)
-print([lines.get_gcj02(p1),lines.get_gcj02(p2)])
+ps = lines.find_geomaxdislinepoint([base, top], points)
+for i in range(len(ps)):
+    ps[i] = lines.get_gcj02(ps[i])
+print(ps)

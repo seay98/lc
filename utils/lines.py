@@ -59,8 +59,8 @@ def find_geomaxdispoint(base, points):
 def find_geomaxdislinepoint(l, points):
     geod = Geodesic.WGS84
     g = geod.Inverse(l[0][0], l[0][1], l[1][0], l[1][1])
-    p1 = []
-    p2 = []
+    # p1 = []
+    # p2 = []
     maxar1 = g['azi1']
     maxar2 = g['azi1']
     for p in points:
@@ -70,17 +70,24 @@ def find_geomaxdislinepoint(l, points):
         # gp.AddPoint(p[0], p[1])
         # _, _, area = gp.Compute()
         g1 = geod.Inverse(l[0][0], l[0][1], p[0], p[1])
-        if maxar1 < g1['azi1']:
-            maxar1 = g1['azi1']
-            p1 = p
-        elif maxar2 > g1['azi1']:
-            maxar2 = g1['azi1']
-            p2 = p
-    p1w = geod.Direct(l[0][0], l[0][1], maxar1, g['s12'])
-    p2w = geod.Direct(l[0][0], l[0][1], maxar2, g['s12'])
-    p1 = [p1w['lat2'], p1w['lon2']]
-    p2 = [p2w['lat2'], p2w['lon2']]
-    return [p1, p2]
+        a1 = g1['azi1']
+        if a1 < 0:
+            a1 = 360.0 + a1
+        if maxar1 < a1:
+            maxar1 = a1
+            # p1 = p
+        elif maxar2 > a1:
+            maxar2 = a1
+            # p2 = p
+    # p1w = geod.Direct(l[0][0], l[0][1], maxar1, g['s12'])
+    # p2w = geod.Direct(l[0][0], l[0][1], maxar2, g['s12'])
+    num = 4
+    n = (maxar2-maxar1) / num
+    ps = []
+    for i in range(num+1):
+        pg = geod.Direct(l[0][0], l[0][1], maxar1+i*n, g['s12'])
+        ps.append([pg['lat2'], pg['lon2']])
+    return ps
 
 
 # 地理坐标系距离计算, WGS84, Parameter: (lat, lng)

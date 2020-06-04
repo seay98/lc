@@ -43,6 +43,7 @@ class Celllocation(models.Model):
     ci1 = models.IntegerField()
     latitude = models.FloatField()
     longitude = models.FloatField()
+    coverage = models.TextField(blank=True)
 
     def __str__(self):
         return "%d-%d-%d-%d: %05f, %05f" % (self.mcc, self.mnc, self.lac, self.ci1, self.latitude, self.longitude)

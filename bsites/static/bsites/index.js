@@ -26,11 +26,16 @@ $(document).ready(function () {
                 data = result.slice(0, -3) + ']'
                 locations = jQuery.parseJSON(data);
                 loadpoints(locations);
-                addPolygon([
-                    new AMap.LngLat(102.712654,25.060810),
-                    new AMap.LngLat(102.713259,25.0571075),
-                    new AMap.LngLat(102.715,25.057067)
-                ]);
+                // alert(locations[0].coverage);
+                addPolygon(locations[0].coverage);
+                // addPolygon([
+                //     new AMap.LngLat(102.712654,25.060810),
+                //     new AMap.LngLat(102.712104,25.057098),
+                //     new AMap.LngLat(102.712992,25.057078),
+                //     new AMap.LngLat(102.713863,25.057233),
+                //     new AMap.LngLat(102.714678,25.057553),
+                //     new AMap.LngLat(102.715399,25.058025)
+                // ]);
             },
             error: function (e) {
                 console.log(e.status);
@@ -105,8 +110,15 @@ function loadpoints(locations) {
 };
 
 function addPolygon(data) {
+    let point = data.split(',');
+    let points = [];
+    let j = 0;
+    for (var i = 0; i < point.length; i=i+2) {
+        points[j++] = new AMap.LngLat(parseFloat(point[i]), parseFloat(point[i+1]));
+    }
+    
     let polygon = new AMap.Polygon({
-      path: data,
+      path: points,
       fillColor: '#ccebc5',
       strokeOpacity: 1,
       fillOpacity: 0.5,
