@@ -47,7 +47,7 @@ pointsline = []
 for vp in validpoints:
     vp1 = vp[0]
     vp2 = vp[1]
-    print(vp)
+    # print(vp)
     p4s = lines.find_geoperpendicularpoints(vp1, vp2)
     pointsline.append(p4s)
 
@@ -62,3 +62,17 @@ for i in range(len(pointsline)):
         if intersection:
             intersections.append(lines.get_gcj02(intersection))
 print(intersections)
+
+pss = []
+for p in points:
+    # point: [lat, lon]
+    p1 = [round(float(p['lat']), 6), round(float(p['lng']), 6)]
+    # Convert to WGS84
+    p1w = lines.get_wgs84(p1)
+    pss.append(p1w)
+coverpoints = lines.get_geocoverpoints(pss)
+for i in range(len(coverpoints)):
+    coverpoints[i] =lines.get_gcj02(coverpoints[i])
+    coverpoints[i][0] = round(coverpoints[i][0], 6)
+    coverpoints[i][1] = round(coverpoints[i][1], 6)
+print(coverpoints)

@@ -2,7 +2,7 @@ from geographiclib.geodesic import Geodesic
 import lines
 
 geod = Geodesic.WGS84
-g = geod.Inverse(9.995, 0.0, 10.0, 0.005)
+g = geod.Inverse(10.0, 0.0, 10.0, 0.0)
 # g1 = geod.Direct(10.0, 0.0, 180-134.37096314105978+270, g['s12']/2)
 
 # l = geod.InverseLine(10.0, 0.0, 0.0, 10.0)
@@ -14,5 +14,8 @@ g = geod.Inverse(9.995, 0.0, 10.0, 0.005)
 # ps = lines.get_geointersection(ps1, ps2)
 # print(ps)
 
-p1, p2 = lines.find_geomaxdislinepoint([[10.0,10.0], [0.0,10.0]], [[5.0,5.0],[5.0,15.0]])
-print([p1, p2])
+# ps = lines.find_geomaxdislinepoint([[10.0,10.0], [0.0,10.0]], [[5.0,5.0],[5.0,15.0]])
+# print(ps)
+
+pss = lines.get_geocoverpoints([[10.0,10.0], [0.0,10.0], [5.0,5.0],[5.0,15.0]])
+print(pss)

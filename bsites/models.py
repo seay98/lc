@@ -44,6 +44,7 @@ class Celllocation(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     coverage = models.TextField(blank=True)
+    signalrange = models.TextField(blank=True)
 
     def __str__(self):
         return "%d-%d-%d-%d: %05f, %05f" % (self.mcc, self.mnc, self.lac, self.ci1, self.latitude, self.longitude)

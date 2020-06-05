@@ -27,7 +27,8 @@ $(document).ready(function () {
                 locations = jQuery.parseJSON(data);
                 loadpoints(locations);
                 // alert(locations[0].coverage);
-                addPolygon(locations[0].coverage);
+                addPolygon(locations[0].coverage, '#ccebc5');
+                addPolygon(locations[0].signalrange, '#ffe4e1');
                 // addPolygon([
                 //     new AMap.LngLat(102.712654,25.060810),
                 //     new AMap.LngLat(102.712104,25.057098),
@@ -109,17 +110,17 @@ function loadpoints(locations) {
     });
 };
 
-function addPolygon(data) {
+function addPolygon(data, color) {
     let point = data.split(',');
     let points = [];
     let j = 0;
     for (var i = 0; i < point.length; i=i+2) {
         points[j++] = new AMap.LngLat(parseFloat(point[i]), parseFloat(point[i+1]));
     }
-    
+    alert(points);
     let polygon = new AMap.Polygon({
       path: points,
-      fillColor: '#ccebc5',
+      fillColor: color,
       strokeOpacity: 1,
       fillOpacity: 0.5,
       strokeColor: '#2b8cbe',
@@ -136,7 +137,7 @@ function addPolygon(data) {
     polygon.on('mouseout', () => {
       polygon.setOptions({
         fillOpacity: 0.5,
-        fillColor: '#ccebc5'
+        fillColor: color
 
       })
     });

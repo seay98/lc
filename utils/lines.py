@@ -89,6 +89,74 @@ def find_geomaxdislinepoint(l, points):
         ps.append([pg['lat2'], pg['lon2']])
     return ps
 
+# 地理坐标系上寻找外围点
+def get_geocoverpoints(points):
+    pss = []
+    minlon = 180.0
+    maxlon = 0.0
+    pstart = []
+    pend = []
+    for p in points:
+        if p[1] < minlon:
+            minlon = p[1]
+            pstart = p
+        if p[1] > maxlon:
+            maxlon = p[1]
+            pend = p
+    
+    pss.append(pstart)
+    
+    ptop = []
+    pnext = pstart
+    while True:
+        pnext = findtopnext(pnext, points)
+        if pnext == pend:
+            break
+        ptop.append(pnext)
+    
+    pss.extend(ptop)
+    pss.append(pend)
+
+    pnext = pstart
+    pbottom = []
+    while True:
+        pnext = findbottomnext(pnext, points)
+        if pnext == pend:
+            break
+        pbottom.append(pnext)
+    pbottom.reverse()
+    pss.extend(pbottom)
+
+    return pss
+
+def findbottomnext(pstart, points):
+    geod = Geodesic.WGS84
+    maxazi = 0.0
+    pnext = []
+    for p in points:
+        if p == pstart:
+            continue
+        g = geod.Inverse(pstart[0], pstart[1], p[0], p[1])
+        azi = g['azi1']
+        if azi > maxazi:
+            maxazi = azi
+            pnext = p
+    return pnext
+
+def findtopnext(pstart, points):
+    geod = Geodesic.WGS84
+    minazi = 360.0
+    pnext = []
+    for p in points:
+        g = geod.Inverse(pstart[0], pstart[1], p[0], p[1])
+        azi = g['azi1']
+        if azi < 0.0:
+            azi = 360 + azi
+        if azi< minazi:
+            minazi = azi
+            pnext = p
+    return pnext
+
 
 # 地理坐标系距离计算, WGS84, Parameter: (lat, lng)
 def get_geodistance(p1, p2):
