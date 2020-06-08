@@ -117,7 +117,7 @@ function addPolygon(data, color) {
     for (var i = 0; i < point.length; i=i+2) {
         points[j++] = new AMap.LngLat(parseFloat(point[i]), parseFloat(point[i+1]));
     }
-    alert(points);
+    // alert(points);
     let polygon = new AMap.Polygon({
       path: points,
       fillColor: color,

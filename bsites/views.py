@@ -16,7 +16,8 @@ class CiView(generic.ListView):
     context_object_name = 'bp'
 
     def get_queryset(self):
-        return Basesite.objects.filter(lac=35001, ci1=145069592).order_by('latitude', 'longitude')
+        # return Basesite.objects.filter(lac=34396).order_by('latitude', 'longitude')
+        return Basesite.objects.filter(lac=34628, ci1=192120080).order_by('latitude', 'longitude')
         # return Basesite.objects.all().order_by('latitude', 'longitude')
 
 
