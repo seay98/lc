@@ -37,12 +37,12 @@ class Basesite(models.Model):
 
 
 class Celllocation(models.Model):
-    mcc = models.IntegerField()
+    mcc = models.IntegerField(default=460)
     mnc = models.IntegerField()
     lac = models.IntegerField()
     ci1 = models.IntegerField()
-    latitude = models.FloatField()
-    longitude = models.FloatField()
+    latitude = models.FloatField(blank=True)
+    longitude = models.FloatField(blank=True)
     coverage = models.TextField(blank=True)
     signalrange = models.TextField(blank=True)
 

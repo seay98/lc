@@ -1,3 +1,4 @@
 [{% for p in bp %}
-    {"lon":"{{ p.longitude }}","lat":"{{ p.latitude }}","title":"{{ p.lac }}-{{ p.ci1 }}-{{ p.mnc }}","coverage":"{{ p.coverage }}","signalrange":"{{ p.signalrange }}"},
+    {% if forloop.counter > 1 %},{% endif %}
+    {"lon":"{{ p.longitude }}","lat":"{{ p.latitude }}","title":"{{ p.lac }}-{{ p.ci1 }}-{{ p.mnc }}","coverage":"{{ p.coverage }}","signalrange":"{{ p.signalrange }}"}
 {% endfor %}]

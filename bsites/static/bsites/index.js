@@ -1,4 +1,9 @@
 $(document).ready(function () {
+
+    // 给按钮绑定事件
+    document.getElementById("cisbtn").onclick = clickOn;
+    // document.getElementById("clickOff").onclick = clickOff;
+
     $("#markbtn").click(function () {
         $.ajax({
             type: "GET",
@@ -6,9 +11,8 @@ $(document).ready(function () {
             url: "ci",
             success: function (result) {
                 //console.log(result.slice(0, -3) + ']');
-                data = result.slice(0, -3) + ']'
-                locations = jQuery.parseJSON(data);
-                loadpoints(locations);
+                locations = jQuery.parseJSON(result);
+                masspoints(locations);
             },
             error: function (e) {
                 console.log(e.status);
@@ -23,20 +27,11 @@ $(document).ready(function () {
             url: "ciloc",
             success: function (result) {
                 //console.log(result.slice(0, -3) + ']');
-                data = result.slice(0, -3) + ']'
-                locations = jQuery.parseJSON(data);
-                loadpoints(locations);
-                // alert(locations[0].coverage);
-                addPolygon(locations[0].coverage, '#ccebc5');
-                addPolygon(locations[0].signalrange, '#ffe4e1');
-                // addPolygon([
-                //     new AMap.LngLat(102.712654,25.060810),
-                //     new AMap.LngLat(102.712104,25.057098),
-                //     new AMap.LngLat(102.712992,25.057078),
-                //     new AMap.LngLat(102.713863,25.057233),
-                //     new AMap.LngLat(102.714678,25.057553),
-                //     new AMap.LngLat(102.715399,25.058025)
-                // ]);
+                locations = jQuery.parseJSON(result);
+                // loadpoints(locations);
+                for (var i in locations) {
+                    addPolygon(locations[i].signalrange, '#ffe4e1');
+                }
             },
             error: function (e) {
                 console.log(e.status);
@@ -48,6 +43,61 @@ $(document).ready(function () {
 var map = new AMap.Map('container', {
     zoom: 13
 });
+
+// JSAPI 2.0 支持显示设置 zIndex, zIndex 越大约靠前，默认按顺序排列
+var style = [{
+    url: 'https://webapi.amap.com/images/mass/mass0.png',
+    anchor: new AMap.Pixel(6, 6),
+    size: new AMap.Size(11, 11),
+    zIndex: 3,
+}, {
+    url: 'https://webapi.amap.com/images/mass/mass1.png',
+    anchor: new AMap.Pixel(4, 4),
+    size: new AMap.Size(7, 7),
+    zIndex: 2,
+}, {
+    url: 'https://webapi.amap.com/images/mass/mass2.png',
+    anchor: new AMap.Pixel(3, 3),
+    size: new AMap.Size(5, 5),
+    zIndex: 1,
+}
+];
+
+function setStyle(multiIcon) {
+    if (multiIcon) {
+        mass.setStyle(style);
+    } else {
+        mass.setStyle(style[2]);
+    }
+};
+
+function masspoints(locations) {
+    var data = [];
+    var pd = {};
+    for (var i in locations) {
+        pd = {lnglat: [locations[i].lon, locations[i].lat], name: locations[i].title, style:1};
+        data.push(pd);
+    }
+
+    var mass = new AMap.MassMarks(data, {
+        opacity: 0.8,
+        zIndex: 111,
+        cursor: 'pointer',
+        style: style
+    });
+
+    var marker = new AMap.Marker({content: ' ', map: map});
+
+    mass.on('mouseover', function (e) {
+
+        marker.setPosition(e.data.lnglat);
+        marker.setLabel({content: e.data.name})
+    });
+
+    mass.setMap(map);
+
+    map.setCenter(new AMap.LngLat(parseFloat(locations[0].lon), parseFloat(locations[0].lat)));
+};
 
 function loadpoints(locations) {
     var icon = new AMap.Icon({
@@ -114,32 +164,84 @@ function addPolygon(data, color) {
     let point = data.split(',');
     let points = [];
     let j = 0;
-    for (var i = 0; i < point.length; i=i+2) {
-        points[j++] = new AMap.LngLat(parseFloat(point[i]), parseFloat(point[i+1]));
+    for (var i = 0; i < point.length; i = i + 2) {
+        points[j++] = new AMap.LngLat(parseFloat(point[i]), parseFloat(point[i + 1]));
     }
     // alert(points);
     let polygon = new AMap.Polygon({
-      path: points,
-      fillColor: color,
-      strokeOpacity: 1,
-      fillOpacity: 0.5,
-      strokeColor: '#2b8cbe',
-      strokeWeight: 1,
-      strokeStyle: 'dashed',
-      strokeDasharray: [5, 5],
+        path: points,
+        fillColor: color,
+        strokeOpacity: 1,
+        fillOpacity: 0.5,
+        strokeColor: '#2b8cbe',
+        strokeWeight: 1,
+        strokeStyle: 'dashed',
+        strokeDasharray: [5, 5],
     });
     polygon.on('mouseover', () => {
-      polygon.setOptions({
-        fillOpacity: 0.7,
-        fillColor: '#7bccc4'
-      })
+        polygon.setOptions({
+            fillOpacity: 0.7,
+            fillColor: '#7bccc4'
+        })
     });
     polygon.on('mouseout', () => {
-      polygon.setOptions({
-        fillOpacity: 0.5,
-        fillColor: color
+        polygon.setOptions({
+            fillOpacity: 0.5,
+            fillColor: color
 
-      })
+        })
     });
     map.add(polygon);
-  };
+};
+
+spi = ['移动','联通',,,,,,,,,,'电信'];
+
+function showInfoClick(e){
+    var text = ''
+    $.ajax({
+        type: "GET",
+        contentType: "application/json;charset=UTF-8",
+        url: "cis",
+        data:{
+            lat: e.lnglat.getLat(),
+            lon: e.lnglat.getLng()
+        },
+        success: function (result) {
+            cis = jQuery.parseJSON(result);
+            for (var i in cis) {
+                var cic = '<p>基站:' + cis[i].lac + '-' + cis[i].ci1 + ';运营商:' + spi[parseInt(cis[i].mnc)] + '</p>';
+                text = text + cic;
+            }
+            // alert(text);
+            document.querySelector("#text").innerHTML = text;
+        },
+        error: function (e) {
+            console.log(e.status);
+            console.log(e.responseText);
+        }
+    });
+    document.querySelector("#text").innerText = text;
+};
+function showInfoDbClick(e){
+    var text = '您在 [ '+e.lnglat.getLng()+','+e.lnglat.getLat()+' ] 的位置双击了地图！'
+    document.querySelector("#text").innerText = text;
+};
+function showInfoMove(){
+    // var text = '您移动了您的鼠标！'
+    // document.querySelector("#text").innerText = text;
+};
+// 事件绑定
+function clickOn(){
+    // log.success("绑定事件!");  
+    map.on('click', showInfoClick);
+    map.on('dblclick', showInfoDbClick);
+    map.on('mousemove', showInfoMove);
+};
+// 解绑事件
+function clickOff(){
+    // log.success("解除事件绑定!"); 
+    map.off('click', showInfoClick);
+    map.off('dblclick', showInfoDbClick);
+    map.off('mousemove', showInfoMove);
+};
+

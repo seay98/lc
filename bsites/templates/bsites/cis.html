@@ -1,0 +1,4 @@
+[{% for ci in cis %}
+    {% if forloop.counter > 1 %},{% endif %}
+    {"lac":"{{ ci.lac }}","ci1":"{{ ci.ci1 }}","mnc":"{{ ci.mnc }}"}
+{% endfor %}]

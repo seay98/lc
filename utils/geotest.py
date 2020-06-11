@@ -1,4 +1,5 @@
 from geographiclib.geodesic import Geodesic
+from matplotlib.path import Path
 import lines
 
 geod = Geodesic.WGS84
@@ -17,5 +18,9 @@ g = geod.Inverse(10.0, 0.0, 10.0, 0.0)
 # ps = lines.find_geomaxdislinepoint([[10.0,10.0], [0.0,10.0]], [[5.0,5.0],[5.0,15.0]])
 # print(ps)
 
-pss = lines.get_geocoverpoints([[10.0,10.0], [0.0,10.0], [5.0,5.0],[5.0,15.0]])
-print(pss)
+# pss = lines.get_geocoverpoints([[10.0,10.0], [0.0,10.0], [5.0,5.0],[5.0,15.0]])
+# print(pss)
+
+polygon = Path([(10.0,10.0),(10.0,20.0),(5.0,20.0),(5.0,10.0)])
+inornot = polygon.contains_point([5.0,15.0])
+print(inornot)

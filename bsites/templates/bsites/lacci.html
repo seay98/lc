@@ -1,3 +1,4 @@
 [{% for p in bp %}
-    {"lon":"{{ p.longitude }}","lat":"{{ p.latitude }}","title":"{{ p.rs }}"},
+    {% if forloop.counter > 1 %},{% endif %}
+    {"lon":"{{ p.longitude }}","lat":"{{ p.latitude }}","title":"{{ p.longitude }}-{{ p.latitude }}-{{ p.rs }}"}
 {% endfor %}]

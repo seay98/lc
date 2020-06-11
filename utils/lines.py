@@ -1,6 +1,7 @@
 import math
 import numpy
 from geographiclib.geodesic import Geodesic
+from matplotlib.path import Path
 import gpstrans
 
 # 地理坐标系找垂直线上的点
@@ -110,22 +111,24 @@ def get_geocoverpoints(points):
     pnext = pstart
     while True:
         pnext = findtopnext(pnext, points)
-        if pnext == pend:
+        if pnext == pend or not pnext:
             break
         ptop.append(pnext)
-    
-    pss.extend(ptop)
+
+    if ptop: 
+        pss.extend(ptop)
     pss.append(pend)
 
     pnext = pstart
     pbottom = []
     while True:
         pnext = findbottomnext(pnext, points)
-        if pnext == pend:
+        if pnext == pend or  not pnext:
             break
         pbottom.append(pnext)
-    pbottom.reverse()
-    pss.extend(pbottom)
+    if pbottom:
+        pbottom.reverse()
+        pss.extend(pbottom)
 
     return pss
 
@@ -156,6 +159,12 @@ def findtopnext(pstart, points):
             minazi = azi
             pnext = p
     return pnext
+
+# 点是否在多边形内
+def is_inpolygon(p, path):
+    polygon = Path([(point[0], point[1]) for point in path])
+    inornot = polygon.contains_point([p[1], p[0]])
+    return inornot
 
 
 # 地理坐标系距离计算, WGS84, Parameter: (lat, lng)
