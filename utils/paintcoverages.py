@@ -23,6 +23,8 @@ with engine.connect() as conn:
         if len(points) < 3:
             continue
         coverpoints = lines.get_geocoverpoints(points)
+        if len(coverpoints) < 3:
+            continue
         signalcov = ""
         for i in range(len(coverpoints)):
             tmp =lines.get_gcj02(coverpoints[i])
@@ -34,11 +36,9 @@ with engine.connect() as conn:
         if rexist.rowcount == 0:
             sqlstr = "INSERT INTO flmgr.bsites_celllocation (mnc, lac, ci1, signalrange) VALUES ({0[2]}, {0[0]}, {0[1]}, '{1}')".format(lacci, signalcov)
             print(sqlstr)
-            conn.execute(
-                sqlstr
-            )
+            conn.execute(sqlstr)
         else:
-            conn.execute(
-                "update flmgr.bsites_celllocation set signalrange='{0}'".format(signalcov)
-            )
+            sqlstr = "update flmgr.bsites_celllocation set signalrange='{0}' where lac={1[0]} and ci1={1[1]}".format(signalcov, lacci)
+            print(sqlstr)
+            conn.execute(sqlstr)
         

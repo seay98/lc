@@ -95,7 +95,7 @@ function masspoints(locations) {
     });
 
     mass.setMap(map);
-
+    // alert(locations[0].lon);
     map.setCenter(new AMap.LngLat(parseFloat(locations[0].lon), parseFloat(locations[0].lat)));
 };
 
@@ -197,6 +197,11 @@ function addPolygon(data, color) {
 spi = ['移动','联通',,,,,,,,,,'电信'];
 
 function showInfoClick(e){
+    var marker = new AMap.Marker({
+        map: map,
+        draggable:true,
+        position: [e.lnglat.getLng(), e.lnglat.getLat()]
+    });
     var text = ''
     $.ajax({
         type: "GET",
@@ -209,8 +214,11 @@ function showInfoClick(e){
         success: function (result) {
             cis = jQuery.parseJSON(result);
             for (var i in cis) {
-                var cic = '<p>基站:' + cis[i].lac + '-' + cis[i].ci1 + ';运营商:' + spi[parseInt(cis[i].mnc)] + '</p>';
-                text = text + cic;
+                var cic = '<p>基站:' + cis[i].lac + '-' + cis[i].ci1 + ';运营商:' + spi[parseInt(cis[i].mnc)];
+                // var url = '<a href="'+cis[i].id+'">查看</a></p>';
+                var url = '<input id="'+cis[i].id+'" type="button" onclick="showrange(this.id)"  style="height:12px"></input></p>';
+                
+                text = text + cic + url;
             }
             // alert(text);
             document.querySelector("#text").innerHTML = text;
@@ -222,9 +230,25 @@ function showInfoClick(e){
     });
     document.querySelector("#text").innerText = text;
 };
+function showrange(id){
+    $.ajax({
+        type: "GET",
+        contentType: "application/json;charset=UTF-8",
+        url: "cil/"+id,
+        success: function (result) {
+            locations = jQuery.parseJSON(result);
+            // loadpoints(locations);
+            addPolygon(locations[0].signalrange, '#ffe4e1');
+        },
+        error: function (e) {
+            console.log(e.status);
+            console.log(e.responseText);
+        }
+    });
+};
 function showInfoDbClick(e){
-    var text = '您在 [ '+e.lnglat.getLng()+','+e.lnglat.getLat()+' ] 的位置双击了地图！'
-    document.querySelector("#text").innerText = text;
+    // var text = '您在 [ '+e.lnglat.getLng()+','+e.lnglat.getLat()+' ] 的位置双击了地图！'
+    // document.querySelector("#text").innerText = text;
 };
 function showInfoMove(){
     // var text = '您移动了您的鼠标！'

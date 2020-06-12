@@ -13,7 +13,7 @@ class Basesite(models.Model):
     lac = models.IntegerField()
     dl_bandwidth = models.IntegerField()
     freq_band_ind = models.IntegerField()
-    creatTime = models.CharField(max_length=64)
+    creatTime = models.DateTimeField()
     serv_rssnr = models.IntegerField()
     cell_rsrp = models.IntegerField()
     pci = models.IntegerField()
