@@ -24,15 +24,24 @@
     </div>
     <script type="text/javascript"
         src="https://webapi.amap.com/maps?v=2.0&key=ea1755d089de2195989b92e02d7a642e"></script>
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
     <script src="{% static 'bsites/index.js' %}"></script>
 
-    <div class="input-card mr-8" style="width:23em">
+    <div class="input-card mr-8" style="width:28em;height:12em;position: absolute; left: 40px; top: 10px;">
         <h4>功能测试</h4>
         <div>
             <div class="input-item">
                 <button id="markbtn" type="button" class="btn btn-primary">我要信号点</button>
                 <button id="cilocbtn" type="button" class="btn btn-primary">我要基站位置</button>
                 <button id="cisbtn" type="button" class="btn btn-primary">我要查询基站</button>
+                <button id="clnbtn" type="button" class="btn btn-primary">清空</button>
+                <!-- <form class="mt-3"> -->
+                    <div class="form-row mt-3">
+                        <div class="col-3"><input type="text" class="form-control" id="lacnum" placeholder="LAC" value="46597"></div>
+                        <div class="col-5"><input type="text" class="form-control" id="cinum" placeholder="CI" value="192571405"></div>
+                        <div class="col-2"><button type="submit" class="btn" id="srchbtn">搜索</button></div>
+                    </div>
+                <!-- </form> -->
             </div>
         </div>
     </div>

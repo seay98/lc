@@ -15,6 +15,25 @@ def whichcis(point):
             path = [points[i:i+2] for i in range(0,len(points),2)]
             inornot = lines.is_inpolygon(point, path)
             if inornot:
-                ci = {'id':row['id'], 'lac':row['lac'], 'ci1':row['ci1'], 'mnc':row['mnc']}
+                res = conn.execute("select rs, latitude, longitude from flmgr.bsites_basesite where lac={} and ci1={};".format(row['lac'], row['ci1']))
+                mds = 9999
+                rs = -999
+                for pt in res:
+                    p = [float(pt['latitude']), float(pt['longitude'])]
+                    ds = lines.get_geodistance(point, p)
+                    if ds < mds:
+                        mds = ds
+                        rs = int(pt['rs'])
+                ci = {'id':row['id'], 'lac':row['lac'], 'ci1':row['ci1'], 'mnc':row['mnc'], 'rs':rs}
                 cis.append(ci)
     return cis
+
+def findci(lac, ci):
+    cif = {}
+    with engine.connect() as conn:
+        sql = "select id, lac, ci1, mnc from flmgr.bsites_celllocation where lac={} and ci1={}".format(lac, ci)
+        result = conn.execute(sql)
+        print(sql)
+        for row in result:
+            cif = {'id':row['id'], 'lac':row['lac'], 'ci1':row['ci1'], 'mnc':row['mnc']}
+    return cif

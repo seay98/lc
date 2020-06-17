@@ -35,7 +35,6 @@ class Basesite(models.Model):
     def __str__(self):
         return "%d-%d-%d-%d-%d" % (self.mcc, self.mnc, self.lac, self.ci1, self.rs)
 
-
 class Celllocation(models.Model):
     mcc = models.IntegerField(default=460)
     mnc = models.IntegerField()
@@ -48,3 +47,12 @@ class Celllocation(models.Model):
 
     def __str__(self):
         return "%d-%d-%d-%d: %05f, %05f" % (self.mcc, self.mnc, self.lac, self.ci1, self.latitude, self.longitude)
+
+class Lac(models.Model):
+    mcc = models.IntegerField(default=460)
+    mnc = models.IntegerField()
+    lac = models.IntegerField()
+    coverage = models.TextField(blank=True)
+
+    def __str__(self):
+        return "%d-%d-%d" % (self.mcc, self.mnc, self.lac)

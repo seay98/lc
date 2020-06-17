@@ -1,3 +1,4 @@
+var text = '';
 $(document).ready(function () {
 
     // 给按钮绑定事件
@@ -32,6 +33,45 @@ $(document).ready(function () {
                 for (var i in locations) {
                     addPolygon(locations[i].signalrange, '#ffe4e1');
                 }
+            },
+            error: function (e) {
+                console.log(e.status);
+                console.log(e.responseText);
+            }
+        });
+    });
+    $("#clnbtn").click(function () {
+        for(var i in polygons){
+            map.remove(polygons[i].pg);
+            var chk = document.getElementById(polygons[i].id);
+            if (chk) chk.checked = false;
+        }
+        polygons.splice(0,polygons.length);
+    });
+    $("#srchbtn").click(function () {
+        var lac = document.getElementById("lacnum").value;
+        var ci = document.getElementById("cinum").value;
+        $.ajax({
+            type: "GET",
+            contentType: "application/json;charset=UTF-8",
+            url: "cild",
+            data:{
+                lac: lac,
+                ci: ci
+            },
+            success: function (result) {
+                var cil = jQuery.parseJSON(result);
+                if (cil.id==''){
+                    log.success("未找到相关信息");
+                    return;
+                }
+                var cic = '<span><font>基站:' + cil.lac + '-' + cil.ci1 + ';运营商:' + sp[parseInt(cil.mnc)] +'</font></span></p>';
+                // var url = '<a href="'+cis[i].id+'">查看</a></p>';
+                var url = '<p><input id="'+cil.id+'" type="checkbox" onclick="showrange(this)"  style="height:12px"></input>';
+                
+                text = text + url + cic;
+                // alert(text);
+                document.querySelector("#text").innerHTML = text;
             },
             error: function (e) {
                 console.log(e.status);
@@ -192,17 +232,18 @@ function addPolygon(data, color) {
         })
     });
     map.add(polygon);
+    return polygon;
 };
 
-spi = ['移动','联通',,,,,,,,,,'电信'];
-
+sp = ['移动','联通',,,,,,,,,,'电信'];
+polygons = [];
 function showInfoClick(e){
     var marker = new AMap.Marker({
         map: map,
         draggable:true,
         position: [e.lnglat.getLng(), e.lnglat.getLat()]
     });
-    var text = ''
+    text = ''
     $.ajax({
         type: "GET",
         contentType: "application/json;charset=UTF-8",
@@ -214,11 +255,18 @@ function showInfoClick(e){
         success: function (result) {
             cis = jQuery.parseJSON(result);
             for (var i in cis) {
-                var cic = '<p>基站:' + cis[i].lac + '-' + cis[i].ci1 + ';运营商:' + spi[parseInt(cis[i].mnc)];
+                var rsc = parseInt(cis[i].rs);
+                var color = "gray";
+                if (rsc > -65) {
+                    color = "green";
+                } else if (rsc<-100) {
+                    color = "red";
+                }
+                var cic = '<span><font color="'+color+'">基站:' + cis[i].lac + '-' + cis[i].ci1 + ';运营商:' + sp[parseInt(cis[i].mnc)] + ';增益:'+cis[i].rs+'</font></span></p>';
                 // var url = '<a href="'+cis[i].id+'">查看</a></p>';
-                var url = '<input id="'+cis[i].id+'" type="button" onclick="showrange(this.id)"  style="height:12px"></input></p>';
+                var url = '<p><input id="'+cis[i].id+'" type="checkbox" onclick="showrange(this)"  style="height:12px"></input>';
                 
-                text = text + cic + url;
+                text = text + url + cic;
             }
             // alert(text);
             document.querySelector("#text").innerHTML = text;
@@ -230,21 +278,34 @@ function showInfoClick(e){
     });
     document.querySelector("#text").innerText = text;
 };
-function showrange(id){
-    $.ajax({
-        type: "GET",
-        contentType: "application/json;charset=UTF-8",
-        url: "cil/"+id,
-        success: function (result) {
-            locations = jQuery.parseJSON(result);
-            // loadpoints(locations);
-            addPolygon(locations[0].signalrange, '#ffe4e1');
-        },
-        error: function (e) {
-            console.log(e.status);
-            console.log(e.responseText);
+function showrange(chk){
+    if (chk.checked==true) {
+        $.ajax({
+            type: "GET",
+            contentType: "application/json;charset=UTF-8",
+            url: "cil/"+chk.id,
+            success: function (result) {
+                locations = jQuery.parseJSON(result);
+                // loadpoints(locations);
+                pg = addPolygon(locations[0].signalrange, '#ffe4e1');
+                pgobj = {id:chk.id, pg:pg};
+                polygons.push(pgobj);
+            },
+            error: function (e) {
+                console.log(e.status);
+                console.log(e.responseText);
+            }
+        });
+    } else {
+        for (var i in polygons){
+            if (polygons[i].id==chk.id) {
+                map.remove(polygons[i].pg);
+                polygons.splice(i, 1);
+                break;
+            }
         }
-    });
+    }
+    
 };
 function showInfoDbClick(e){
     // var text = '您在 [ '+e.lnglat.getLng()+','+e.lnglat.getLat()+' ] 的位置双击了地图！'
