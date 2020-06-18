@@ -1,0 +1,4 @@
+[{% for lac in lacs %}
+    {% if forloop.counter > 1 %},{% endif %}
+    {"id":"{{ lac.id }}","lac":"{{ lac.lac }}","mnc":"{{ lac.mnc }}"}
+{% endfor %}]

@@ -16,11 +16,11 @@ with engine.connect() as conn:
     # 获取lac-mnc内的外围点
     for lac in lacs:
         res = conn.execute("select signalrange from flmgr.bsites_celllocation where lac={0[0]} and mnc={0[1]}".format(lac))
+        points = []
         for row in res:
-            points = row['signalrange'].split(',')
-            points = [float(p) for p in points]
-            pts = [points[i:i+2] for i in range(0,len(points),2)]
-            points = []
+            txp = row['signalrange'].split(',')
+            txp = [float(p) for p in txp]
+            pts = [txp[i:i+2] for i in range(0,len(txp),2)]
             for p in pts:
                 pw = lines.get_wgs84([p[1],p[0]])
                 points.append(pw)

@@ -1,4 +1,5 @@
 var text = '';
+var lactext = '';
 $(document).ready(function () {
 
     // 给按钮绑定事件
@@ -31,7 +32,7 @@ $(document).ready(function () {
                 locations = jQuery.parseJSON(result);
                 // loadpoints(locations);
                 for (var i in locations) {
-                    addPolygon(locations[i].signalrange, '#ffe4e1');
+                    addPolygon(locations[i].coverage, '#ffe4e1');
                 }
             },
             error: function (e) {
@@ -237,12 +238,14 @@ function addPolygon(data, color) {
 
 sp = ['移动','联通',,,,,,,,,,'电信'];
 polygons = [];
+lacpg = [];
 function showInfoClick(e){
     var marker = new AMap.Marker({
         map: map,
         draggable:true,
         position: [e.lnglat.getLng(), e.lnglat.getLat()]
     });
+    // ci
     text = ''
     $.ajax({
         type: "GET",
@@ -263,7 +266,6 @@ function showInfoClick(e){
                     color = "red";
                 }
                 var cic = '<span><font color="'+color+'">基站:' + cis[i].lac + '-' + cis[i].ci1 + ';运营商:' + sp[parseInt(cis[i].mnc)] + ';增益:'+cis[i].rs+'</font></span></p>';
-                // var url = '<a href="'+cis[i].id+'">查看</a></p>';
                 var url = '<p><input id="'+cis[i].id+'" type="checkbox" onclick="showrange(this)"  style="height:12px"></input>';
                 
                 text = text + url + cic;
@@ -277,6 +279,35 @@ function showInfoClick(e){
         }
     });
     document.querySelector("#text").innerText = text;
+
+    // lac
+    lactext = ''
+    $.ajax({
+        type: "GET",
+        contentType: "application/json;charset=UTF-8",
+        url: "lacs",
+        data:{
+            lat: e.lnglat.getLat(),
+            lon: e.lnglat.getLng()
+        },
+        success: function (result) {
+            lacs = jQuery.parseJSON(result);
+            for (var i in lacs) {
+                var color = "gray";
+                var lacc = '<span><font color="'+color+'">基站:' + lacs[i].lac + ';运营商:' + sp[parseInt(lacs[i].mnc)] +'</font></span></p>';
+                var url = '<p><input id="'+lacs[i].id+'" type="checkbox" onclick="showlacrange(this)"  style="height:12px"></input>';
+                
+                lactext = lactext + url + lacc;
+            }
+            // alert(text);
+            document.querySelector("#lactext").innerHTML = lactext;
+        },
+        error: function (e) {
+            console.log(e.status);
+            console.log(e.responseText);
+        }
+    });
+    document.querySelector("#lactext").innerText = lactext;
 };
 function showrange(chk){
     if (chk.checked==true) {
@@ -304,8 +335,34 @@ function showrange(chk){
                 break;
             }
         }
-    }
-    
+    }  
+};
+function showlacrange(chk){
+    if (chk.checked==true) {
+        $.ajax({
+            type: "GET",
+            contentType: "application/json;charset=UTF-8",
+            url: "lacr/"+chk.id,
+            success: function (result) {
+                locations = jQuery.parseJSON(result);
+                pg = addPolygon(locations[0].coverage, '#ffe4e1');
+                pgobj = {id:chk.id, pg:pg};
+                lacpg.push(pgobj);
+            },
+            error: function (e) {
+                console.log(e.status);
+                console.log(e.responseText);
+            }
+        });
+    } else {
+        for (var i in lacpg){
+            if (lacpg[i].id==chk.id) {
+                map.remove(lacpg[i].pg);
+                lacpg.splice(i, 1);
+                break;
+            }
+        }
+    }  
 };
 function showInfoDbClick(e){
     // var text = '您在 [ '+e.lnglat.getLng()+','+e.lnglat.getLat()+' ] 的位置双击了地图！'

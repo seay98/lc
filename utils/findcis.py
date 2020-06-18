@@ -37,3 +37,19 @@ def findci(lac, ci):
         for row in result:
             cif = {'id':row['id'], 'lac':row['lac'], 'ci1':row['ci1'], 'mnc':row['mnc']}
     return cif
+
+def whichlacs(point):
+    lacs = []
+    with engine.connect() as conn:
+        result = conn.execute("select id, lac, mnc, coverage from flmgr.bsites_lac")
+        for row in result:
+            sgnrange = row['coverage']
+            points = sgnrange.split(',')
+            points = [float(p) for p in points]
+            path = [points[i:i+2] for i in range(0,len(points),2)]
+            inornot = lines.is_inpolygon(point, path)
+            if inornot:
+                lac = {'id':row['id'], 'lac':row['lac'], 'mnc':row['mnc']}
+                lacs.append(lac)
+    return lacs
+

@@ -1,0 +1,4 @@
+[{% for p in bp %}
+    {% if forloop.counter > 1 %},{% endif %}
+    {"title":"{{ p.lac }}-{{ p.mnc }}","coverage":"{{ p.coverage }}"}
+{% endfor %}]

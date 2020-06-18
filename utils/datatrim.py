@@ -10,7 +10,7 @@ devicetime = {}
 delstarttime = {}
 sqls = []
 with engine.connect() as conn:
-    result = conn.execute("SELECT deviceId, latitude, longitude, creatTime FROM flmgr.bsites_basesite order by creatTime;")
+    result = conn.execute("SELECT deviceId, creatTime FROM flmgr.bsites_basesite order by creatTime;")
     
     for rec in result:
         ct = rec['creatTime']
@@ -37,6 +37,6 @@ with engine.connect() as conn:
     for sql in sqls:
         # r = conn.execute(sql)
         print(sql)
-print(len(sql))
+print(len(sqls))
 
 
