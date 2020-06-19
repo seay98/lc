@@ -39,7 +39,7 @@ with engine.connect() as conn:
     pgroup = []
     for span in spans:
         sql = "SELECT id, deviceId, latitude, longitude, creatTime FROM flmgr.bsites_basesite where deviceId='{0[0]}' and creatTime>'{0[1]}' and creatTime<'{0[2]}' order by creatTime;".format(span)
-        # print(sql)
+        print(sql)
         result = conn.execute(sql)
         pgroup.clear()
         for row in result:
@@ -49,7 +49,7 @@ with engine.connect() as conn:
             for g in pgroup:
                 ds = lines.get_geodistance(cp, g['lastpoint'])
                 inv = row['creatTime'] - g['lasttime']
-                if ds < 500:
+                if ds < 200:
                     g['lastpoint'] = cp
                     g['lasttime'] = ct
                     g['ids'].append(row['id'])
