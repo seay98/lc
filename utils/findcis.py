@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 import lines
 
 
-engine = create_engine('mysql+mysqldb://flmgr:a1b2c3d4e5@127.0.0.1:3307/flmgr', echo=False)
+engine = create_engine('mysql+mysqldb://flmgr:a1b2c3d4e5@127.0.0.1:3306/flmgr', echo=False)
 
 def whichcis(point):
     cis = []

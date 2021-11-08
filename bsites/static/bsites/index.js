@@ -240,6 +240,7 @@ sp = ['移动','联通',,,,,,,,,,'电信'];
 polygons = [];
 lacpg = [];
 function showInfoClick(e){
+    //alert("click");
     var marker = new AMap.Marker({
         map: map,
         draggable:true,

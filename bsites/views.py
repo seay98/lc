@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.views import generic
 from .models import Basesite, Celllocation, Lac
 import sys
-sys.path.append('/home/yh/dev/django/lc/lcsite/utils')
+sys.path.append('/Users/yuhai/Downloads/github/lc/utils')
 import findcis
 
 def IndexView(request):
